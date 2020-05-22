@@ -24,15 +24,23 @@ class LinkedList():
             self.last = node
     def remove_first(self):
         if self.first != None:
+            val = self.first.item
             if self.first.next == None:
                 self.first = self.last = None
             else:
                 self.first = self.first.next
                 self.first.prev = None
+            return val
+        else:
+            return None
     def remove_last(self):
         if self.last != None:
+            val = self.last.item
             if self.last.prev == None:
                 self.last = self.first = None
             else:
                 self.last = self.last.prev
                 self.last.next = None
+            return val
+        else:
+            return None
