@@ -1,3 +1,4 @@
+from enum import Enum
 from linked_list import *
 class Direction(Enum):
     N = 1
@@ -14,16 +15,17 @@ class Snake():
         self.dir = Direction.E
         self.pos = LinkedList()
         for i in range(size):
-            self.pos.add_last((len(grid)//2 - i, len(grid[0])//2))
+            self.pos.add_last((len(grid[0])//2 - i, len(grid)//2))
+            grid[len(grid)//2 - i][len(grid[0])//2] = 1
 
     def upadte(self):
         next_pos = None
         if self.dir == Direction.N:
-            next_pos = (self.pos.first[0], self.pos.first[1] + 1)
+            next_pos = (self.pos.first[0], self.pos.first[1] - 1)
         elif self.dir == Direction.E:
             next_pos = (self.pos.first[0] + 1, self.pos.first[1])
         elif self.dir == Direction.S:
-            next_pos = (self.pos.first[0], self.pos.first[1] - 1)
+            next_pos = (self.pos.first[0], self.pos.first[1] + 1)
         else:
             next_pos = (self.pos.first[0] - 1, self.pos.first[1])
 
@@ -35,12 +37,12 @@ class Snake():
                 return 0
             elif i == 0:
                 last_pos = self.pos.remove_last()
-                self.grid[last_pos[1]][last_pos[0]] = 0
+                self.grid[last_pos[0]][last_pos[1]] = 0
                 self.pos.add_first(next_pos)
-                self.grid[next_pos[1]][next_pos[0]] = 1
+                self.grid[next_pos[0]][next_pos[1]] = 1
                 return 1
             self.pos.add_first(next_pos)
-            self.grid[next_pos[1]][next_pos[0]] = 1
+            self.grid[next_pos[0]][next_pos[1]] = 1
             return 2
         else:
             return 0

@@ -16,7 +16,7 @@ class LinkedList():
             self.first.prev = node
             self.first = node
     def add_last(self, val):
-        if self.first = None:
+        if self.first == None:
             self.first = self.last = Node(val)
         else:
             node = Node(val, prev=self.last)
