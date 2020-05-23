@@ -41,7 +41,7 @@ class Snake():
                 return 1
             else: # i == 2
                 self.size += 1
-                self.speed *= 1.2
+                self.speed += 1
                 self.pos.add_first(next_pos)
                 self.grid[next_pos[0]][next_pos[1]] = 1
             return 2

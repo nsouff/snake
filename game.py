@@ -5,7 +5,7 @@ from linked_list import *
 import random
 
 class Game():
-    def __init__(self, width=80, height=50):
+    def __init__(self, width=40, height=40):
         self.width = width
         self.height = height
         self.foods = []
@@ -19,9 +19,9 @@ class Game():
             self.foods.append((x, y))
         else:
             while self.grid[x][y] != 0:
-                if y < height - 1:
+                if y < self.height - 1:
                     y += 1
-                elif x < width - 1:
+                elif x < self.width - 1:
                     y = 0
                     x += 1
                 else:
@@ -69,7 +69,7 @@ def main():
             if i == 2:
                 game.foods.remove(game.snake.pos.first.item)
             actual = pygame.time.get_ticks()
-            if actual >= next_food:
+            if actual >= next_food or len(game.foods) == 0:
                 game.add_food()
                 next_food = pygame.time.get_ticks() + 5000
             update_render(game, window)
