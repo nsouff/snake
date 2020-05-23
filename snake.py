@@ -10,10 +10,10 @@ class Direction(Enum):
 class Snake():
     def __init__(self, grid, size=3, speed=10):
         self.grid = grid
-        self.size = size
         self.speed = speed
         self.dir = Direction.E
         self.pos = LinkedList()
+        self.score = 0
         for i in range(size):
             self.pos.add_last((len(grid)//2 - i, len(grid[0])//2))
             self.grid[len(grid)//2 - i][len(grid[0])//2] = 1
@@ -40,10 +40,10 @@ class Snake():
                 self.grid[next_pos[0]][next_pos[1]] = 1
                 return 1
             else: # i == 2
-                self.size += 1
                 self.speed += 1
                 self.pos.add_first(next_pos)
                 self.grid[next_pos[0]][next_pos[1]] = 1
+                self.score += 1
             return 2
         else:
             return 0
