@@ -8,15 +8,15 @@ class Direction(Enum):
     def opposite(self, dir):
         return abs(self.value - dir.value) == 2
 class Snake():
-    def __init__(self, grid, size=3, speed=15):
+    def __init__(self, grid, size=3, speed=10):
         self.grid = grid
         self.size = size
         self.speed = speed
         self.dir = Direction.E
         self.pos = LinkedList()
         for i in range(size):
-            self.pos.add_last((len(grid[0])//2 - i, len(grid)//2))
-            grid[len(grid)//2 - i][len(grid[0])//2] = 1
+            self.pos.add_last((len(grid)//2 - i, len(grid[0])//2))
+            self.grid[len(grid)//2 - i][len(grid[0])//2] = 1
 
     def update(self):
         next_pos = None
@@ -29,10 +29,8 @@ class Snake():
         else:
             next_pos = (self.pos.first.item[0] - 1, self.pos.first.item[1])
 
-        self.pos.add_first(next_pos)
-        self.pos.remove_last()
-        if len(self.grid) > next_pos[1] and len(self.grid[0]) > next_pos[0] and next_pos[0] >= 0 and next_pos[1] >= 0:
-            i = self.grid[next_pos[1]][next_pos[0]]
+        if len(self.grid[0]) > next_pos[1] and len(self.grid) > next_pos[0] and next_pos[0] >= 0 and next_pos[1] >= 0:
+            i = self.grid[next_pos[0]][next_pos[1]]
             if i == 1:
                 return 0
             elif i == 0:
@@ -41,7 +39,7 @@ class Snake():
                 self.pos.add_first(next_pos)
                 self.grid[next_pos[0]][next_pos[1]] = 1
                 return 1
-            else:
+            else: # i == 2
                 self.size += 1
                 self.speed *= 1.2
                 self.pos.add_first(next_pos)
@@ -52,3 +50,5 @@ class Snake():
     def turn(self, dir):
         if not dir.opposite(self.dir):
             self.dir = dir
+            return True
+        return False
