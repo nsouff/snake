@@ -5,15 +5,29 @@ from game import *
 from linked_list import *
 from pygame.locals import *
 import sys
+font = None
+black = (0, 0, 0)
+white = (255, 255, 255)
+red = (255, 0, 0)
+blue = (0, 0, 255)
 def update_render(game, window):
+
     window.fill((0,0,0))
+    # pygame.draw.line(window, blue, (0, 404), (400, 404), 10)
+    pygame.draw.rect(window, blue, (0, 400, 400, 100))
+
     it = game.snake.pos.first
     while it != None:
-        pygame.draw.rect(window, (255, 255, 255), (it.item[0] * 10, it.item[1] * 10, 10, 10))
+        pygame.draw.rect(window, white, (it.item[0] * 10, it.item[1] * 10, 10, 10))
         it = it.next
     for food in game.foods:
         pygame.draw.circle(window, (255, 0, 0), (food[0]*10+5, food[1]*10+5), 5)
+    score_disp = font.render("Score " + str(game.snake.score), False, black)
+    high_score_disp = font.render("High Score 10", False, black)
+    window.blit(high_score_disp, (10, 450))
+    window.blit(score_disp, (10, 410))
     pygame.display.flip()
+
 
 def gameloop(window):
     game = Game()
@@ -51,14 +65,16 @@ def gameloop(window):
             update_render(game, window)
             clock.tick(game.snake.speed)
 def menu(window):
-    menu = pygame_menu.Menu(400, 400, 'Menu', onclose=pygame_menu.events.EXIT ,theme=pygame_menu.themes.THEME_DARK)
+    menu = pygame_menu.Menu(500, 400, 'Menu', onclose=pygame_menu.events.EXIT ,theme=pygame_menu.themes.THEME_DARK)
     menu.add_button('Play', gameloop, window)
     menu.add_button('Quit', pygame_menu.events.EXIT)
     menu.mainloop(window)
 def main():
     pygame.init()
+    global font
+    font = pygame.font.Font('resources/INVASION2000.TTF', 30)
     pygame.display.set_caption("Snake")
-    window = pygame.display.set_mode((400, 400))
+    window = pygame.display.set_mode((400, 500))
     menu(window)
 
 if __name__ == '__main__':
