@@ -46,7 +46,8 @@ def gameloop(window):
             actual = pygame.time.get_ticks()
             if actual >= next_food or len(game.foods) == 0:
                 game.add_food()
-                next_food = pygame.time.get_ticks() + 5000
+                if actual >=next_food:
+                    next_food = pygame.time.get_ticks() + 5000
             update_render(game, window)
             clock.tick(game.snake.speed)
 def menu(window):
