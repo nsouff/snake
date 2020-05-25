@@ -14,7 +14,6 @@ blue = (0, 0, 255)
 def update_render(game, window):
 
     window.fill((0,0,0))
-    # pygame.draw.line(window, blue, (0, 404), (400, 404), 10)
     pygame.draw.rect(window, blue, (0, 400, 400, 100))
 
     it = game.snake.pos.first
@@ -33,6 +32,8 @@ def update_render(game, window):
 
 def gameloop(window):
     name = name_input.get_value()
+    if len(name) == 0:
+        name = 'Unknown'
     game = Game()
     clock = pygame.time.Clock()
     eat_sound = pygame.mixer.Sound("resources/eat_apple.wav")
@@ -56,6 +57,7 @@ def gameloop(window):
         i = game.snake.update()
         if i == 0:
             Score.score.add_score(name, game.snake.score)
+            Score.score.save_score()
             running = False
         else :
             if i == 2:
@@ -73,8 +75,17 @@ def menu(window):
     menu = pygame_menu.Menu(500, 400, 'Menu', onclose=exit ,theme=pygame_menu.themes.THEME_DARK)
     name_input = menu.add_text_input('Name: ', maxchar=10)
     menu.add_button('Play', gameloop, window)
+    menu.add_button('Scores', score_menu, window)
     menu.add_button('Quit', exit)
     menu.mainloop(window)
+
+def score_menu(window):
+    global font
+    score_menu = pygame_menu.Menu(500, 400, 'Scores', onclose=pygame_menu.events.BACK, theme=pygame_menu.themes.THEME_DARK)
+    for name, score in Score.score.scores:
+        score_menu.add_label(name + " " +  str(score), font_size=20, font_name=pygame_menu.font.FONT_8BIT, font_color=(255, 0, 0))
+    score_menu.mainloop(window)
+
 
 
 def exit():
@@ -88,7 +99,7 @@ def main():
     Score.init_score()
     pygame.init()
     global font
-    font = pygame.font.Font('resources/INVASION2000.TTF', 30)
+    font = pygame.font.Font(pygame_menu.font.FONT_8BIT, 25)
     pygame.display.set_caption("Snake")
     window = pygame.display.set_mode((400, 500))
     menu(window)
