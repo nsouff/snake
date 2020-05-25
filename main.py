@@ -82,6 +82,7 @@ def menu(window):
     name_input = menu.add_text_input('Name: ', maxchar=10)
     menu.add_button('Play', gameloop, window)
     menu.add_button('Scores', score_menu, window)
+    menu.add_button('Reset Scores', Score.reset_scores)
     menu.add_button('Quit', exit)
     menu.mainloop(window)
 

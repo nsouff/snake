@@ -75,3 +75,7 @@ class Score():
     @classmethod
     def init_score(cls):
         cls.score = Score()
+    @classmethod
+    def reset_scores(cls):
+        os.remove(cls.score.filename)
+        cls.score.scores = []
