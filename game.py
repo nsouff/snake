@@ -2,8 +2,11 @@ import pygame
 from pygame.locals import *
 from snake import *
 from linked_list import *
+import shelve
 import random
+import os
 
+score = None
 class Game():
     def __init__(self, width=40, height=40):
         self.width = width
@@ -31,11 +34,13 @@ class Game():
             self.foods.append((x, y))
 
 class Score():
-    def __init__(self, scores=None, max_len=10, file='.score'):
-        self.file = file
+    def __init__(self, max_len=10, filename='.score'):
+        self.filename = filename
         self.max_len = max_len
-        if scores != None:
-            self.scores = scores
+        if os.path.exists(filename):
+            f = shelve.open(filename)
+            self.scores = f['score']
+            f.close()
         else:
             self.scores = []
     def add_score(self, name, score):
@@ -57,3 +62,16 @@ class Score():
             return self.__add_score_aux(name, score, start=middle+1, end=end)
         else:
             return self.__add_score_aux(name, score, start=start, end=middle)
+
+    def save_score(self):
+        f = shelve.open(self.filename)
+        f['score'] = self.scores
+        f.close()
+    def get_highest(self):
+        if len(self.scores) == 0:
+            return 0
+        else:
+            return self.scores[0][1]
+    @classmethod
+    def init_score(cls):
+        cls.score = Score()

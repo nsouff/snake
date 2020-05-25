@@ -6,6 +6,7 @@ from linked_list import *
 from pygame.locals import *
 import sys
 font = None
+name_input = None
 black = (0, 0, 0)
 white = (255, 255, 255)
 red = (255, 0, 0)
@@ -23,13 +24,15 @@ def update_render(game, window):
     for food in game.foods:
         pygame.draw.circle(window, (255, 0, 0), (food[0]*10+5, food[1]*10+5), 5)
     score_disp = font.render("Score " + str(game.snake.score), False, black)
-    high_score_disp = font.render("High Score 10", False, black)
+    high_score = max(Score.score.get_highest(), game.snake.score)
+    high_score_disp = font.render("High Score " + str(high_score), False, black)
     window.blit(high_score_disp, (10, 450))
     window.blit(score_disp, (10, 410))
     pygame.display.flip()
 
 
 def gameloop(window):
+    name = name_input.get_value()
     game = Game()
     clock = pygame.time.Clock()
     eat_sound = pygame.mixer.Sound("resources/eat_apple.wav")
@@ -39,8 +42,8 @@ def gameloop(window):
         dir_change = False
         for event in pygame.event.get():
             if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
+                Score.score.add_score(name, game.snake.score)
+                exit()
             elif event.type == KEYDOWN and not dir_change:
                 if event.key == K_UP:
                     dir_change = game.snake.turn(Direction.N)
@@ -52,6 +55,7 @@ def gameloop(window):
                     dir_change = game.snake.turn(Direction.W)
         i = game.snake.update()
         if i == 0:
+            Score.score.add_score(name, game.snake.score)
             running = False
         else :
             if i == 2:
@@ -65,11 +69,23 @@ def gameloop(window):
             update_render(game, window)
             clock.tick(game.snake.speed)
 def menu(window):
-    menu = pygame_menu.Menu(500, 400, 'Menu', onclose=pygame_menu.events.EXIT ,theme=pygame_menu.themes.THEME_DARK)
+    global name_input
+    menu = pygame_menu.Menu(500, 400, 'Menu', onclose=exit ,theme=pygame_menu.themes.THEME_DARK)
+    name_input = menu.add_text_input('Name: ', maxchar=10)
     menu.add_button('Play', gameloop, window)
-    menu.add_button('Quit', pygame_menu.events.EXIT)
+    menu.add_button('Quit', exit)
     menu.mainloop(window)
+
+
+def exit():
+    Score.score.save_score()
+    pygame_menu.events.EXIT
+    pygame.quit()
+    sys.exit()
+
+
 def main():
+    Score.init_score()
     pygame.init()
     global font
     font = pygame.font.Font('resources/INVASION2000.TTF', 30)
