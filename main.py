@@ -11,10 +11,10 @@ black = (0, 0, 0)
 white = (255, 255, 255)
 red = (255, 0, 0)
 blue = (0, 0, 255)
+clock = None
 def update_render(game, window):
 
-    window.fill((0,0,0))
-    pygame.draw.rect(window, blue, (0, 400, 400, 100))
+    window.fill(black)
 
     it = game.snake.pos.first
     while it != None:
@@ -22,15 +22,20 @@ def update_render(game, window):
         it = it.next
     for food in game.foods:
         pygame.draw.circle(window, (255, 0, 0), (food[0]*10+5, food[1]*10+5), 5)
+    score_display(game, window)
+    pygame.display.flip()
+
+def score_display(game, window):
+    pygame.draw.rect(window, blue, (0, 400, 400, 100))
     score_disp = font.render("Score " + str(game.snake.score), False, black)
     high_score = max(Score.score.get_highest(), game.snake.score)
     high_score_disp = font.render("High Score " + str(high_score), False, black)
     window.blit(high_score_disp, (10, 450))
     window.blit(score_disp, (10, 410))
-    pygame.display.flip()
 
 
 def gameloop(window):
+    global clock
     name = name_input.get_value()
     if len(name) == 0:
         name = 'Unknown'
@@ -58,6 +63,7 @@ def gameloop(window):
         if i == 0:
             Score.score.add_score(name, game.snake.score)
             Score.score.save_score()
+            game_over(game, window)
             running = False
         else :
             if i == 2:
@@ -85,6 +91,29 @@ def score_menu(window):
     for name, score in Score.score.scores:
         score_menu.add_label(name + " " +  str(score), font_size=20, font_name=pygame_menu.font.FONT_8BIT, font_color=(255, 0, 0))
     score_menu.mainloop(window)
+
+
+def game_over(game, window):
+    global clock
+    window.fill(black)
+    game_over_disp = font.render("GAME OVER", False, white)
+    window.blit(game_over_disp, (90, 180))
+    score_display(game, window)
+    pygame.display.flip()
+    game_over_sound = pygame.mixer.Sound("resources/game_over.wav")
+    game_over_sound.play()
+    exit = pygame.time.get_ticks() + 3000
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                exit()
+            elif event.type == KEYDOWN and event.key == K_RETURN:
+                return
+        if pygame.time.get_ticks() >= exit:
+            return
+        pygame.display.flip()
+        clock.tick(30)
+
 
 
 
