@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 from snake import *
 from linked_list import *
-import shelve
+import pickle
 import random
 import os
 
@@ -38,9 +38,8 @@ class Score():
         self.filename = filename
         self.max_len = max_len
         if os.path.exists(filename):
-            f = shelve.open(filename)
-            self.scores = f['score']
-            f.close()
+            with open(filename, 'rb') as f:
+                self.scores = pickle.load(f)
         else:
             self.scores = []
     def add_score(self, name, score):
@@ -64,9 +63,8 @@ class Score():
             return self.__add_score_aux(name, score, start=start, end=middle)
 
     def save_score(self):
-        f = shelve.open(self.filename)
-        f['score'] = self.scores
-        f.close()
+        with open(self.filename, 'wb') as f:
+            pickle.dump(self.scores, f)
     def get_highest(self):
         if len(self.scores) == 0:
             return 0
